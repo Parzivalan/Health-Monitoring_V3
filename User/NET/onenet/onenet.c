@@ -115,7 +115,7 @@ unsigned char OneNet_FillBuf(char *buf)
 	strcpy(buf, ",;");
 
 	memset(text, 0, sizeof(text));
-	sprintf(text, "Temperature,%.3lf;", temperature+0.05f);
+	sprintf(text, "Temperature,%.1lf;", temperature+0.05f);
 	strcat(buf, text);
 
 	/* memset(text, 0, sizeof(text));

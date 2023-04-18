@@ -13,6 +13,8 @@
                 "f:\\Code\\Keil5_project_file\\STM32F103ZET6\\Health-Monitoring_V3\\User\\SYSTEM\\delay",
                 "f:\\Code\\Keil5_project_file\\STM32F103ZET6\\Health-Monitoring_V3\\User\\SYSTEM\\sys",
                 "f:\\Code\\Keil5_project_file\\STM32F103ZET6\\Health-Monitoring_V3\\User\\SYSTEM\\usart",
+                "f:\\Code\\Keil5_project_file\\STM32F103ZET6\\Health-Monitoring_V3\\User\\HARDWARE\\mpu6050\\eMPL",
+                "f:\\Code\\Keil5_project_file\\STM32F103ZET6\\Health-Monitoring_V3\\User\\HARDWARE\\mpu6050",
                 "C:\\My Program Files\\Keil 5\\ARM\\ARMCC\\include",
                 "C:\\My Program Files\\Keil 5\\ARM\\ARMCC\\include\\rw",
                 "f:\\Code\\Keil5_project_file\\STM32F103ZET6\\Health-Monitoring_V3\\Libraries\\CMSIS\\startup",
