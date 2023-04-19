@@ -124,11 +124,11 @@ unsigned char OneNet_FillBuf(char *buf)
 
 	memset(text, 0, sizeof(text));
 	sprintf(text, "The falls,%d;", fall_flag);
-	strcat(buf, text);
+	strcat(buf, text); */
 
 	memset(text, 0, sizeof(text));
-	sprintf(text, "The smoke,%lf;", smoke);
-	strcat(buf, text); */
+	sprintf(text, "The smoke,%.2lf;", smoke);
+	strcat(buf, text);
 	
 	return strlen(buf);
 

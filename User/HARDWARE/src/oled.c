@@ -3,6 +3,14 @@
 #include "string.h"
 #include "delay.h"
 
+#define OLED_NUM_A 0x1
+#define OLED_NUM_B 0x2
+#define OLED_NUM_C 0x4
+#define OLED_NUM_D 0x8
+#define OLED_NUM_E 0x10
+#define OLED_NUM_F 0x20
+#define OLED_NUM_G 0x40
+
 //初始化硬件IIC引脚
 void I2C_Configuration(void)
 {
@@ -80,6 +88,57 @@ void WriteData(unsigned char I2C_Data)
     I2C_WriteByte(0x40, I2C_Data);
 }
 
+const uint8_t heart[] = {
+    0xF8, 0xFC, 0xFE, 0xFF, 0xFF, 0xFF, 0xFE, 0xFC,
+    0xF8, 0xF0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xFF,
+    0xFF, 0xFF, 0xFE, 0xFC, 0xF8,
+    0x01, 0x07, 0x1F, 0x3F, 0x7F, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+    0x7F, 0x3F, 0x1F, 0x07, 0x01,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03,
+    0x07, 0x0F, 0x0F, 0x0F, 0x07, 0x03, 0x01, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00};
+void OLED_showHeart(uint8_t showOrNot)
+{
+    uint8_t i;
+    // 画心形
+    OLED_Set_Pos(1, 0);
+    if (showOrNot)
+    {
+        for (i = 0; i < 21; i++)
+        {
+            OLED_WriteByte(heart[i], OLED_DATA);
+        }
+        OLED_Set_Pos(1, 1);
+        for (i = 0; i < 21; i++)
+        {
+            OLED_WriteByte(heart[21 + i], OLED_DATA);
+        }
+        OLED_Set_Pos(1, 2);
+        for (i = 0; i < 21; i++)
+        {
+            OLED_WriteByte(heart[42 + i], OLED_DATA);
+        }
+    }
+    else
+    {
+        for (i = 0; i < 21; i++)
+        {
+            OLED_WriteByte(0, OLED_DATA);
+        }
+        OLED_Set_Pos(1, 3);
+        for (i = 0; i < 21; i++)
+        {
+            OLED_WriteByte(0, OLED_DATA);
+        }
+        OLED_Set_Pos(1, 4);
+        for (i = 0; i < 21; i++)
+        {
+            OLED_WriteByte(0, OLED_DATA);
+        }
+    }
+}
+
 //初始化OLED
 void OLED_Init(void)
 {
@@ -125,6 +184,49 @@ void OLED_Init(void)
     OLED_Clear();
 }
 
+void OLED_showFrame(void)
+{
+    uint8_t i;
+    // 画心形
+    OLED_showHeart(1);
+    //画bpm
+    const uint8_t bpm[] = {
+        0x3E, 0x28, 0x38, 0x00, 0x3E, 0x0A, 0x0E, 0x00, 0x3E, 0x02, 0x1C, 0x02, 0x3E};
+    OLED_Set_Pos(58, 2);
+    for (i = 0; i < 13; i++)
+    {
+        OLED_WriteByte(bpm[i], OLED_DATA);
+    }
+    //画%
+    const uint8_t percent[] = {
+        0x63, 0x33, 0x18, 0x0C, 0x66, 0x63};
+    OLED_Set_Pos(121, 2);
+    for (i = 0; i < 6; i++)
+    {
+        OLED_WriteByte(percent[i], OLED_DATA);
+    }
+    //画spo2
+    const uint8_t spo2[] = {
+        0x38, 0x44, 0x44, 0x44, 0x88, 0x00, 0xFC, 0x44, 0x44, 0x44, 0x38,
+        0xE1, 0x12, 0x12, 0x12, 0xE1, 0x00, 0x23, 0x10, 0x10, 0x90, 0x60,
+        0x07, 0x08, 0x08, 0x08, 0x07, 0x00, 0x0C, 0x0A, 0x09, 0x08, 0x08};
+    OLED_Set_Pos(73, 0);
+    for (i = 0; i < 11; i++)
+    {
+        OLED_WriteByte(spo2[i], OLED_DATA);
+    }
+    OLED_Set_Pos(73, 1);
+    for (i = 0; i < 11; i++)
+    {
+        OLED_WriteByte(spo2[11 + i], OLED_DATA);
+    }
+    OLED_Set_Pos(73, 2);
+    for (i = 0; i < 11; i++)
+    {
+        OLED_WriteByte(spo2[22 + i], OLED_DATA);
+    }
+}
+    
 //清屏函数,清完屏,整个屏幕是黑色的!和没点亮一样!!!
 void OLED_Clear(void)
 {
@@ -350,3 +452,136 @@ void OLED_Show_Welcome(unsigned char x, unsigned char y, unsigned char N)
         adder += 1;
     }
 }
+
+//x1,y1,x2,y2 填充区域的对角坐标
+//确保x1<=x2;y1<=y2 0<=x1<=127 0<=y1<=63	 	 
+//dot:0,清空;1,填充	  
+void OLED_Fill(u8 x1,u8 y1,u8 x2,u8 y2,u8 dot)  
+{  
+	u8 x,y;  
+	for(x=x1;x<=x2;x++)
+	{
+		for(y=y1;y<=y2;y++)OLED_DrawPoint(x,y,dot);
+	}													    
+	OLED_Refresh_Gram();//更新显示
+}
+
+//显示数字，心率888，spo2 888
+const uint8_t oled_nums[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x00};
+const uint8_t oled_nums_pos[] = {24, 36, 47, 86, 98, 109};
+void OLED_showNum(uint8_t which, uint8_t num)
+{
+    uint8_t dat = oled_nums[num];
+    uint8_t start = oled_nums_pos[which];
+    uint8_t i, temp;
+    OLED_Set_Pos(start, 0);
+    for (i = 0; i < 10; i++)
+    {
+        temp = 0;
+        if (i <= 1)
+        {
+            if (dat & OLED_NUM_F)
+                temp |= 0xf8;
+        }
+        else if (i >= 2 && i <= 7)
+        {
+            if (dat & OLED_NUM_A)
+                temp |= 0x06;
+        }
+        else
+        {
+            if (dat & OLED_NUM_B)
+                temp |= 0xf8;
+        }
+        OLED_WriteByte(temp, OLED_DATA);
+    }
+    OLED_Set_Pos(start, 1);
+    for (i = 0; i < 10; i++)
+    {
+        temp = 0;
+        if (i <= 1)
+        {
+            if (dat & OLED_NUM_F)
+                temp |= 0x03;
+            if (dat & OLED_NUM_E)
+                temp |= 0xf0;
+        }
+        else if (i >= 2 && i <= 7)
+        {
+            if (dat & OLED_NUM_G)
+                temp |= 0x0c;
+        }
+        else
+        {
+            if (dat & OLED_NUM_B)
+                temp |= 0x03;
+            if (dat & OLED_NUM_C)
+                temp |= 0xf0;
+        }
+        OLED_WriteByte(temp, OLED_DATA);
+    }
+    OLED_Set_Pos(start, 2);
+    for (i = 0; i < 10; i++)
+    {
+        temp = 0;
+        if (i <= 1)
+        {
+            if (dat & OLED_NUM_E)
+                temp |= 0x07;
+        }
+        else if (i >= 2 && i <= 7)
+        {
+            if (dat & OLED_NUM_D)
+                temp |= 0x18;
+        }
+        else
+        {
+            if (dat & OLED_NUM_C)
+                temp |= 0x07;
+        }
+        OLED_WriteByte(temp, OLED_DATA);
+    }
+}
+
+//画图,128*24
+uint8_t pos_x_this = 0;
+char pos_y_old = 0;
+char max(char a, char b) { return a > b ? a : b; }
+char min(char a, char b) { return a < b ? a : b; }
+void OLED_drawChart(float value)
+{
+    uint8_t dat[] = {0xff, 0xff, 0xff};
+    char pos_y = (char)(value * 0.12) + 10;
+    if (pos_y > 23)
+        pos_y = 23;
+    if (pos_y <= 0)
+        pos_y = 0;
+    char i, ii, blank;
+    char y_max = max(pos_y, pos_y_old);
+    char y_min = min(pos_y, pos_y_old);
+
+    if (y_max == y_min)
+        y_max = y_min + 1;
+    for (i = 0; i < 3; i++)
+    {
+        if ((y_min - i * 8) >= 0)
+            dat[i] &= (uint8_t)(dat[i] >> (y_min - i * 8));
+        if (((i + 1) * 8 - y_max) >= 0)
+            dat[i] &= (uint8_t)(dat[i] << ((i + 1) * 8 - y_max));
+    }
+    for (i = 0; i < 3; i++)
+    {
+        OLED_Set_Pos(pos_x_this, 7 - i);
+        OLED_WriteByte(dat[i], OLED_DATA);
+        blank = 127 - pos_x_this;
+        if (blank > 3)
+            blank = 3;
+        for (ii = 0; ii < blank; ii++)
+            OLED_WriteByte(0, OLED_DATA);
+    }
+    pos_y_old = pos_y;
+    pos_x_this++;
+    if (pos_x_this > 127)
+        pos_x_this = 0;
+}
+

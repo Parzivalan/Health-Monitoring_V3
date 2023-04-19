@@ -601,6 +601,21 @@
               <FileType>1</FileType>
               <FilePath>..\User\HARDWARE\src\timer.c</FilePath>
             </File>
+            <File>
+              <FileName>algorithm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\HARDWARE\src\algorithm.c</FilePath>
+            </File>
+            <File>
+              <FileName>max30102.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\HARDWARE\src\max30102.c</FilePath>
+            </File>
+            <File>
+              <FileName>myiic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\HARDWARE\src\myiic.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

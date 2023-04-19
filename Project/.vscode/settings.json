@@ -2,6 +2,10 @@
     "files.associations": {
         "main.h": "c",
         "string.h": "c",
-        "mpuiic.h": "c"
+        "mpuiic.h": "c",
+        "atomic": "c",
+        "cstdint": "c",
+        "oled.h": "c",
+        "myiic.h": "c"
     }
 }
